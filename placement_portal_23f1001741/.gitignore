@@ -1,0 +1,14 @@
+# Redis Database Snapshots
+*.rdb
+celerybeat-schedule
+
+# Python / Backend
+backend/venv/
+backend/__pycache__/
+backend/*.py[cod]
+instance/
+*.sqlite3
+
+# System Files
+.DS_Store
+Thumbs.db

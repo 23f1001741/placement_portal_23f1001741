@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+  title: Professional Placement Portal API
+  description: Exhaustive API documentation for the MAD-2 Placement Management system.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000/api
+    description: Local development server
+
+paths:
+  # --- Authentication ---
+  /auth/register:
+    post:
+      summary: User Registration
+      description: Allows students and companies to create new accounts.
+      responses:
+        '201':
+          description: User created successfully.
+  /auth/login:
+    post:
+      summary: User Login
+      description: Authenticates credentials and returns a JWT token and user role.
+      responses:
+        '200':
+          description: Login successful.
+
+  # --- Admin Endpoints ---
+  /admin/dashboard:
+    get:
+      summary: Admin Metrics
+      description: Returns global counts for students, companies, and drives.
+      responses:
+        '200':
+          description: Success.
+  /admin/users:
+    get:
+      summary: User Management
+      description: Searchable list of all users with activation status.
+      responses:
+        '200':
+          description: Success.
+  /admin/users/{id}/toggle-status:
+    post:
+      summary: Blacklist/Activate User
+      description: Implements soft-delete logic by toggling the active flag.
+      responses:
+        '200':
+          description: User status updated.
+  /admin/companies/pending:
+    get:
+      summary: Pending Companies
+      description: Fetches company profiles awaiting admin approval.
+      responses:
+        '200':
+          description: Success.
+  /admin/drives/pending:
+    get:
+      summary: Pending Drives
+      description: Fetches placement drives awaiting admin verification.
+      responses:
+        '200':
+          description: Success.
+
+  # --- Company Endpoints ---
+  /company/drives:
+    post:
+      summary: Create Placement Drive
+      description: Allows approved companies to submit new job drives.
+      responses:
+        '201':
+          description: Drive submitted for approval.
+  /company/drives/{id}/applications:
+    get:
+      summary: View Applicants
+      description: Retrieves all students who applied to a specific drive.
+      responses:
+        '200':
+          description: Success.
+  /company/applications/{id}/status:
+    put:
+      summary: Update Application Status
+      description: Updates status to Shortlisted, Selected, or Rejected.
+      responses:
+        '200':
+          description: Status updated.
+  /company/drives/{id}/export:
+    post:
+      summary: Async Applicant Export
+      description: Triggers Celery task to email a CSV of applicants to the company.
+      responses:
+        '202':
+          description: Background task triggered.
+
+  # --- Student Endpoints ---
+  /student/profile:
+    put:
+      summary: Update Profile
+      description: Updates student details like CGPA and Branch.
+      responses:
+        '200':
+          description: Profile updated.
+  /student/profile/resume:
+    post:
+      summary: Upload Resume
+      description: Handles PDF resume uploads to the server.
+      responses:
+        '200':
+          description: Resume uploaded successfully.
+  /student/drives:
+    get:
+      summary: Eligible Drives
+      description: Returns drives filtered by search and CGPA eligibility.
+      responses:
+        '200':
+          description: Success.
+  /student/applications:
+    post:
+      summary: Submit Application
+      description: Submits application after validating eligibility and duplicates.
+      responses:
+        '201':
+          description: Application submitted.
+  /student/export:
+    post:
+      summary: Async History Export
+      description: Triggers Celery task to email application history to the student.
+      responses:
+        '202':
+          description: Background task triggered.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
